@@ -1,0 +1,9 @@
+[Unit]
+Description=Runs scripts on first boot of the target device
+
+[Service]
+ExecStart=/#SBINDIR#/firstboot.sh
+
+[Install]
+WantedBy=multi-user.target
+
