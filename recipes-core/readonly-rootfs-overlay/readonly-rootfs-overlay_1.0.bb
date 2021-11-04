@@ -18,6 +18,9 @@ do_install() {
         install -d "${D}/media/rfs/rw"
 }
 
+# allow files in /media
+QA_EMPTY_DIRS:remove = "/media"
+
 FILES:${PN} += " /sbin/init-overlay /sbin/reboot-ro /sbin/reboot-rw /media/rfs"
 
 # Due to kernel dependency
