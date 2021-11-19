@@ -17,6 +17,8 @@ IMAGE_INSTALL:append = " python3-multiprocessing python3-compression python3-xml
 IMAGE_INSTALL:append = " networkmanager networkmanager-nmcli"
 #IMAGE_INSTALL:append = " modemmanager"
 
+IMAGE_INSTALL:append = " paho-mqtt-c paho-mqtt-cpp"
+
 ROOT_USER_PASSWORD ?= "toor"
 ROOTFS_POSTPROCESS_COMMAND:append = " set_root_passwd;"
 set_root_passwd() {
