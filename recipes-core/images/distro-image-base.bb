@@ -58,3 +58,39 @@ distro_imageinfo_function() {
     echo "VERSION=${IMAGE_VERSION}" >> ${IMAGE_ROOTFS}/etc/imageinfo.txt
 }
 
+POPULATE_SDK_POST_HOST_COMMAND:append:task-populate-sdk = " distro_sdkinfo_function; "
+distro_sdkinfo_function() {
+    set -- "${BSPDIR}/yocto"/meta-yocto-*
+    [ -e "$1" ] || { echo "WARNING: no matching directory found which start with meta-yocto-*!" >&2; }
+    [ "$#" -gt 1 ] && echo "WARNING: $# matching directories found which start with meta-yocto-*; only taking first" >&2
+    YOCTO_LAYER_DIR=$1
+
+    if [ -d "$YOCTO_LAYER_DIR" ]; then
+        YOCTO_LAYER_NAME=$(basename ${YOCTO_LAYER_DIR})
+        IMAGE_VERSION="${YOCTO_LAYER_NAME}"
+
+        # .localversion is used to add e.g. "-unstable-" into the version string
+        if [ -f "${BSPDIR}/.localversion" ]; then
+             LOCALVERSION=$(cat ${BSPDIR}/.localversion)
+             IMAGE_VERSION="${IMAGE_VERSION}-${LOCALVERSION}"
+        fi
+
+        cd ${YOCTO_LAYER_DIR}
+        if [ -d .git ]; then
+            YOCTO_LAYER_VERSION=$(git describe --always)
+        else
+            YOCTO_LAYER_VERSION="#####"
+        fi
+        IMAGE_VERSION="${IMAGE_VERSION}-${YOCTO_LAYER_VERSION}"
+        cd -
+    fi
+
+	mkdir -p ${SDK_OUTPUT}/${SDKPATH}/
+	echo -n "BUILD_DATE=" > ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+	date +%FT%T%z >> ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+	echo "SDK_NAME="${SDK_NAME} >> ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+	echo "IMAGE="${SDK_TARGETS} >> ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+	echo "MACHINE="${MACHINE} >> ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+    echo "VERSION=${IMAGE_VERSION}" >> ${SDK_OUTPUT}/${SDKPATH}/sdkinfo.txt
+}
+
