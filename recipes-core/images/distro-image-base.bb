@@ -21,3 +21,37 @@ set_root_passwd() {
    sed -i "s%^root:[^:]*:%root:${ROOTPW_ENCRYPTED}:%" ${IMAGE_ROOTFS}/etc/shadow
 }
 
+ROOTFS_POSTPROCESS_COMMAND:append = " distro_imageinfo_function; "
+distro_imageinfo_function() {
+    set -- "${BSPDIR}/yocto"/meta-yocto-*
+    [ -e "$1" ] || { echo "WARNING: no matching directory found which start with meta-yocto-*!" >&2; }
+    [ "$#" -gt 1 ] && echo "WARNING: $# matching directories found which start with meta-yocto-*; only taking first" >&2
+    YOCTO_LAYER_DIR=$1
+
+    if [ -d "$YOCTO_LAYER_DIR" ]; then
+        YOCTO_LAYER_NAME=$(basename ${YOCTO_LAYER_DIR})
+        IMAGE_VERSION="${YOCTO_LAYER_NAME}"
+
+        # .localversion is used to add e.g. "-unstable-" into the version string
+        if [ -f "${BSPDIR}/.localversion" ]; then
+             LOCALVERSION=$(cat ${BSPDIR}/.localversion)
+             IMAGE_VERSION="${IMAGE_VERSION}-${LOCALVERSION}"
+        fi
+
+        cd ${YOCTO_LAYER_DIR}
+        if [ -d .git ]; then
+            YOCTO_LAYER_VERSION=$(git describe --always)
+        else
+            YOCTO_LAYER_VERSION="#####"
+        fi
+        IMAGE_VERSION="${IMAGE_VERSION}-${YOCTO_LAYER_VERSION}"
+        cd -
+    fi
+
+	echo -n "BUILD_DATE=" > ${IMAGE_ROOTFS}/etc/imageinfo.txt
+	date +%FT%T%z >> ${IMAGE_ROOTFS}/etc/imageinfo.txt
+	echo "IMAGE="${BPN} >> ${IMAGE_ROOTFS}/etc/imageinfo.txt
+	echo "MACHINE="${MACHINE} >> ${IMAGE_ROOTFS}/etc/imageinfo.txt
+    echo "VERSION=${IMAGE_VERSION}" >> ${IMAGE_ROOTFS}/etc/imageinfo.txt
+}
+
