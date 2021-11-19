@@ -8,7 +8,7 @@ inherit core-image
 IMAGE_INSTALL:append = " readonly-rootfs-overlay firstboot populate-sdi shell-profile"
 
 # full "ps aux"
-IMAGE_INSTALL:append = " procps bash tar htop"
+IMAGE_INSTALL:append = " procps bash tar htop picocom"
 
 # NetworkManager
 IMAGE_INSTALL:append = " networkmanager networkmanager-nmcli"
