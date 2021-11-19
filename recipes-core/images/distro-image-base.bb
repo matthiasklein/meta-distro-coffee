@@ -10,6 +10,9 @@ IMAGE_INSTALL:append = " readonly-rootfs-overlay firstboot populate-sdi shell-pr
 # full "ps aux"
 IMAGE_INSTALL:append = " procps bash tar htop picocom"
 
+# Dependencies for PyCharm Remote helpers ("Run" & "Debug")
+IMAGE_INSTALL:append = " python3-multiprocessing python3-compression python3-xmlrpc"
+
 # NetworkManager
 IMAGE_INSTALL:append = " networkmanager networkmanager-nmcli"
 #IMAGE_INSTALL:append = " modemmanager"
