@@ -8,6 +8,8 @@ SRC_URI += "file://disable-gzip.cfg \
             file://enable-bc.cfg \
             file://disable-net-tools.cfg \
             file://disable-vi.cfg \
-            file://disable-fdisk.cfg"
+            file://disable-fdisk.cfg \
+            file://disable-wget.cfg \
+            "
 
-RDEPENDS:${PN} += "gzip iproute2 net-tools util-linux nano vim"
+RDEPENDS:${PN} += "gzip iproute2 net-tools util-linux nano vim wget"
