@@ -1,0 +1,19 @@
+#! /bin/bash
+
+[ -z "$YOCTO_TARGET_IP" ] && printf "\nERROR: please source Yocto SDK environment !!!\n\n\n" && exit 1;
+
+if [ "$1" == "" ]; then
+    HOST=$YOCTO_TARGET_IP
+  else
+    HOST=$1
+fi
+
+sudo arp -d ${HOST}
+
+ACT_PATH=$PWD
+cd
+ssh-keygen -f ".ssh/known_hosts" -R ${HOST} > /dev/null 2>&1
+cd ${ACT_PATH}
+
+ssh -o "StrictHostKeyChecking no" -i $OECORE_NATIVE_SYSROOT/ssh/service -l $YOCTO_TARGET_USERNAME $HOST
+

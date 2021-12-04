@@ -1,0 +1,13 @@
+#! /bin/bash
+
+array_nic=()
+for iface in $(/sbin/ifconfig | cut -d ' ' -f1| tr ':' '\n' | awk NF)
+do
+  if [ "$iface" != "lo" ] 
+  then
+    array_nic+=("$iface")
+  fi
+done
+
+for i in "${array_nic[@]}"; do sudo arp-scan -l -I "$i"; done
+

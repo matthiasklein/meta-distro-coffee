@@ -1,0 +1,36 @@
+#! /bin/bash
+
+[ -z "$YOCTO_TARGET_IP" ] && printf "\nERROR: please source Yocto SDK environment !!!\n\n\n" && exit 1;
+
+if [ "$3" == "" ]; then
+    HOST=$YOCTO_TARGET_IP
+    SOURCE="$1"
+    TARGET="$2"
+  else
+    HOST=$1
+    SOURCE="$2"
+    TARGET="$3"
+fi
+
+
+if [ -e "$SOURCE" ]; then
+  # to device
+ 
+  if [ "$TARGET" == "" ]; then
+    TARGET=/sde/
+  fi
+    
+  TARGET=${YOCTO_TARGET_USERNAME}@${HOST}:${TARGET}
+else
+  # from device
+
+  if [ "$TARGET" == "" ]; then
+    TARGET=~/
+  fi
+
+  SOURCE=${YOCTO_TARGET_USERNAME}@${HOST}:${SOURCE}
+fi
+
+echo scp -o "StrictHostKeyChecking no" -i $OECORE_NATIVE_SYSROOT/ssh/service ${SOURCE} ${TARGET}
+     scp -o "StrictHostKeyChecking no" -i $OECORE_NATIVE_SYSROOT/ssh/service ${SOURCE} ${TARGET}
+

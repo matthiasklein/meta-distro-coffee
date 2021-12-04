@@ -1,0 +1,3 @@
+export YOCTO_TARGET_USERNAME=root
+export YOCTO_TARGET_IP=192.168.7.2
+

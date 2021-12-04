@@ -4,7 +4,9 @@ SUMMARY = "A console-only image that fully supports the target device hardware."
 IMAGE_FEATURES += "package-management hwcodecs ssh-server-openssh "
 
 inherit core-image
+inherit populate_sdk_qt6_base
 
+TOOLCHAIN_HOST_TASK:append = " nativesdk-populate-sdk"
 IMAGE_INSTALL:append = " readonly-rootfs-overlay firstboot populate-sdi shell-profile"
 
 # full "ps aux"
@@ -20,7 +22,14 @@ IMAGE_INSTALL:append = " python3-multiprocessing python3-compression python3-xml
 IMAGE_INSTALL:append = " networkmanager networkmanager-nmcli"
 #IMAGE_INSTALL:append = " modemmanager"
 
-IMAGE_INSTALL:append = " paho-mqtt-c paho-mqtt-cpp"
+IMAGE_INSTALL:append = " i2c-tools"
+IMAGE_INSTALL:append = " gdbserver gcc-sanitizers boost paho-mqtt-c paho-mqtt-cpp"
+
+TOOLCHAIN_HOST_TASK:append = " nativesdk-qtbase-dev nativesdk-qtbase-tools nativesdk-qttools-dev nativesdk-qttools-tools"
+IMAGE_INSTALL:append = " qtbase qtserialport qtserialbus"
+
+TOOLCHAIN_HOST_TASK:append = " nativesdk-protobuf-compiler nativesdk-protobuf-c nativesdk-grpc nativesdk-grpc-dev nativesdk-grpc-compiler"
+IMAGE_INSTALL:append = " protobuf grpc"
 
 ROOT_USER_PASSWORD ?= "toor"
 ROOTFS_POSTPROCESS_COMMAND:append = " set_root_passwd;"

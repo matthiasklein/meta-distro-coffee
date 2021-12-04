@@ -18,9 +18,6 @@ do_configure() {
 }
 
 do_compile() {
-    ls -l ${S}
-    ls -l ${B}
-   
     install -d ${B}/sdi-filesystem
     install -d ${B}/sdi-filesystem/.ssh
    

@@ -1,0 +1,91 @@
+#! /usr/bin/env python3
+
+import subprocess, os, time
+
+##############################################################
+# MAIN
+##############################################################
+def main():
+  global targetIp, targetUsername, yoctoNativeSysroot
+  os.putenv("LC_ALL", "C") # english command outputs
+  loadYoctoConfig()
+  
+  utcTime = syncTime()
+  print("Device clock synchronized to {} (UTC)".format(utcTime))
+
+  return 0
+
+##############################################################
+# Synchronize the target time with the host time
+##############################################################
+def syncTime():
+  utcTime = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+  sshTarget("date -u -s \"{}\"".format(utcTime))
+  sshTarget("hwclock -wu")
+  return(utcTime)
+
+##############################################################
+# Copy a file using SCP to the target
+##############################################################
+def loadYoctoConfig():
+  global targetIp, targetUsername, yoctoNativeSysroot
+
+  targetIp = os.environ.get('YOCTO_TARGET_IP')
+  if targetIp == None:
+    print("ERROR: environment YOCTO_TARGET_IP is not set !!!")
+    sys.exit()
+
+  targetUsername = os.environ.get('YOCTO_TARGET_USERNAME')
+  if targetUsername == None:
+    print("ERROR: environment YOCTO_TARGET_USERNAME is not set !!!")
+    sys.exit()
+
+  yoctoNativeSysroot = os.environ.get('OECORE_NATIVE_SYSROOT')
+  if yoctoNativeSysroot == None:
+    print("ERROR: environment OECORE_NATIVE_SYSROOT is not set !!!")
+    sys.exit()
+
+  return
+
+##############################################################
+# Copy a file using SCP to the target
+##############################################################
+def scpTarget(src, dst):
+  global targetIp, targetUsername, yoctoNativeSysroot
+
+  execCmd("scp -i {}/ssh/service -o \"StrictHostKeyChecking no\" {}  {}@{}:{}".format(yoctoNativeSysroot, src, targetUsername, targetIp, dst), shell=True)
+  return
+
+##############################################################
+# Execute a SSH command on the target
+##############################################################
+def sshTarget(cmd, verifyReturnCode=True):
+  global targetIp, targetUsername, yoctoNativeSysroot
+
+  execCmd("ssh {} -i {}/ssh/service -o \"StrictHostKeyChecking no\" -l {} '{}'".format(targetIp, yoctoNativeSysroot, targetUsername, cmd), shell=True, verifyReturnCode=verifyReturnCode)
+  return
+
+##############################################################
+# Execute command and check return value
+##############################################################
+def execCmd(cmd, verifyReturnCode=True, hideStdOut=False, shell=False):
+  if(shell == False):
+    cmd = cmd.split()
+
+  if(verifyReturnCode == True):
+    if(hideStdOut == True):
+      out = subprocess.DEVNULL
+    else:
+      out = None
+      
+    subprocess.check_call(cmd, stdout=out, shell=shell)
+  else:
+    subprocess.call(cmd, stderr=subprocess.DEVNULL, shell=shell)
+  return
+
+##############################################################
+# Call main function when invoked directly
+##############################################################
+if __name__ == "__main__":
+   main()
+
