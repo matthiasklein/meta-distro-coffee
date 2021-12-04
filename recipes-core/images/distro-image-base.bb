@@ -8,7 +8,7 @@ inherit core-image
 IMAGE_INSTALL:append = " readonly-rootfs-overlay firstboot populate-sdi shell-profile"
 
 # full "ps aux"
-IMAGE_INSTALL:append = " procps bash tar htop picocom"
+IMAGE_INSTALL:append = " procps bash tar htop picocom curl"
 
 # device tree compiler to dump running DT from /sys/firmware/devicetree/base
 IMAGE_INSTALL:append = " dtc"
