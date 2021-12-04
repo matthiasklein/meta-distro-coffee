@@ -10,6 +10,9 @@ IMAGE_INSTALL:append = " readonly-rootfs-overlay firstboot populate-sdi shell-pr
 # full "ps aux"
 IMAGE_INSTALL:append = " procps bash tar htop picocom"
 
+# device tree compiler to dump running DT from /sys/firmware/devicetree/base
+IMAGE_INSTALL:append = " dtc"
+
 # Dependencies for PyCharm Remote helpers ("Run" & "Debug")
 IMAGE_INSTALL:append = " python3-multiprocessing python3-compression python3-xmlrpc"
 
